@@ -6,9 +6,13 @@
     label="click here to start" 
     (click)="modelService.simulateHttpRes()"
     class="p-button-success">
-</button>
+    </button>
   </div>
   <div class="div2"> 
+    <div class="fail-guage">
+      <p-slider [(ngModel)]="modelService.failChances" [step]="1"  styleClass="w-14rem"/>
+      <p>Increase chances of failure</p>
+    </div>
     
   </div>
   <div class="div3">
