@@ -3,10 +3,18 @@
 </div>
 <div class="parent" [ngSwitch]="modelService.appState">
     <div class="div5">
-        <div class="loader4"></div>
-        <div class="error">
-            <div class="retries"></div>
+        <div class="loader4" *ngSwitchCase="'loading'"></div>
+        <div class="error" *ngSwitchCase="'error'">
+            <div class="retries">
+                error: fallback data is...
+                <p>{{modelService.apiRes}}</p>
+            </div>
         </div>
-        <div class="fallback"></div>
+        <div class="retry-count" *ngSwitchCase="'retry'">{{modelService.retryCount}}</div>
+        <div class="fallback" *ngSwitchCase="'fallback'">fallback</div>
+        <div class="success" *ngSwitchCase="'resSucess'">
+            API response success
+            <p>{{modelService.apiRes}}</p>
+        </div>
     </div>
 </div>

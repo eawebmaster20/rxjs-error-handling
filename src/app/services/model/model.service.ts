@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { interval, of, throwError } from 'rxjs';
 import { tap, take, delay, catchError, mergeMap, retryWhen, scan } from 'rxjs/operators';
 import { responseData } from '../../interfaces/model.httpRes';
+import * as confetti from 'canvas-confetti';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,9 @@ import { responseData } from '../../interfaces/model.httpRes';
 export class ModelService {
   results: responseData[] = [];
   appState: string = 'idle';
+  retryCount: string = '';
+  apiRes:string = '';
+  failChances:number = 0;
   httpResponse: responseData[] = [
     { name: 'Eric', title: 'Buy groceries', completed: false },
     { name: 'Bright', title: 'Clean the house', completed: true },
@@ -21,14 +25,25 @@ export class ModelService {
     { name: 'Sam', title: 'Exercise for 30 minutes', completed: true },
   ];
 
-  interval$ = interval(1000);
+  interval$ = interval(4000);
 
   constructor() {}
 
+  celebrate() {
+    const duration = 3000;
+
+    confetti({
+      particleCount: 150,
+      spread: 180,
+      origin: { y: 0.6 },
+      colors: ['#FF4500', '#008080', '#FFD700'],
+    });
+
+    setTimeout(() => confetti.reset(), duration);
+  }
   simulateHttpRes() {
     let i = 0;
     this.appState = 'loading';
-    
     this.interval$.pipe(
       mergeMap(() =>
         of(this.httpResponse[i])
@@ -44,7 +59,8 @@ export class ModelService {
               errors.pipe(
                 scan((retryCount, error) => {
                   retryCount += 1;
-                  console.log(`Retry attempt #${retryCount}`);
+                  this.appState = 'retry';
+                  this.retryCount = `Retry attempt #${retryCount}`;
                   if (retryCount >= 3) {
                     throw error;
                   }
@@ -54,13 +70,20 @@ export class ModelService {
               )
             ),
             catchError(err => {
+              this.appState = 'error';
               console.error('All retries failed:', err);
               throwError(() => new Error('Simulated network error'))
+              this.apiRes = JSON.stringify({
+                name: 'Fallback User',
+                title: 'Fallback Task',
+                completed: false
+              })
               return of({
                 name: 'Fallback User',
                 title: 'Fallback Task',
                 completed: false
               }); 
+               
             })
           )
       ),
@@ -74,98 +97,23 @@ export class ModelService {
         console.log('Final Value:', value);
       },
       error: (err) => console.error('Error:', err),
-      complete: () => console.log('Complete!')
+      complete: () => {
+        this.appState = 'complete';
+        console.log('Complete!')
+      }
     });
   }
 
   randomFailOrSucceed(response: responseData) {
-    const shouldFail = Math.random() < 0.8; // 80% chance to fail
+    const shouldFail = Math.random() < (this.failChances/100) // 80% chance to fail
     if (shouldFail) {
       console.log('Simulated failure');
       return throwError(() => new Error('Simulated network error')).pipe(delay(2000));
     } else {
       console.log('Simulated success');
+      this.apiRes = JSON.stringify(response)
+      this.appState = 'resSucess';
       return of(response);
     }
   }
 }
-
-// import { Injectable } from '@angular/core';
-// import { interval, of, throwError } from 'rxjs';
-// import { tap, take, delay, catchError, mergeMap, retry } from 'rxjs/operators';
-// import { responseData } from '../../interfaces/model.httpRes';
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class ModelService {
-//   results: responseData[] = [];
-//   appState: boolean = false;
-//   httpResponse: responseData[] = [
-//     { name: 'Eric', title: 'Buy groceries', completed: false },
-//     { name: 'Bright', title: 'Clean the house', completed: true },
-//     { name: 'Silas', title: 'Finish Angular project', completed: false },
-//     { name: 'Nana', title: 'Read a book', completed: false },
-//     { name: 'Brown', title: 'Exercise for 30 minutes', completed: true },
-//     { name: 'Ken', title: 'Exercise for 30 minutes', completed: true },
-//     { name: 'Bismark', title: 'Exercise for 30 minutes', completed: true },
-//     { name: 'Derick', title: 'Exercise for 30 minutes', completed: true },
-//     { name: 'Sam', title: 'Exercise for 30 minutes', completed: true },
-//   ];
-
-//   interval$ = interval(1000);
-
-//   constructor() {}
-
-//   simulateHttpRes() {
-//     let i = 0;
-//     this.appState = true;
-//     this.interval$.pipe(
-//       mergeMap(() =>
-//         of(this.httpResponse[i])
-//           .pipe(
-//             take(1),
-//             delay(2000),
-//             tap((
-//               data=>{
-//                 console.log(data);
-//                 this.appState = false;
-//               }
-//             )),
-//             mergeMap(response => this.randomFailOrSucceed(response)),
-//             retry(3),
-//             // catchError(err => {
-//             //   console.error('All retries failed:', err);
-//             //   return of({
-//             //     name: 'Fallback User',
-//             //     title: 'Fallback Task',
-//             //     completed: false
-//             //   }); 
-//             // })
-//           )
-//       ),
-//       tap(() => {
-//         i++;
-//         console.log('Request number:', i);
-//       }),
-//       take(8)
-//     ).subscribe({
-//       next: (value) => {
-//         console.log('Final Value:', value);
-//       },
-//       error: (err) => console.error('Error:', err),
-//       complete: () => console.log('Complete!')
-//     });
-//   }
-
-//   private randomFailOrSucceed(response: responseData) {
-//     const shouldFail = Math.random() < 0.8;
-//     if (shouldFail) {
-//       console.log('Simulated failure');
-//       return throwError(() => new Error('Simulated network error')).pipe(delay(2000));
-//     } else {
-//       console.log('Simulated success');
-//       return of(response);
-//     }
-//   }
-// }
