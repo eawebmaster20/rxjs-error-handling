@@ -13,6 +13,7 @@ export class ModelService {
   retryCount: string = '';
   apiRes:string = '';
   failChances:number = 0;
+  i:number = 0;
   httpResponse: responseData[] = [
     { name: 'Eric', title: 'Buy groceries', completed: false },
     { name: 'Bright', title: 'Clean the house', completed: true },
@@ -29,32 +30,31 @@ export class ModelService {
 
   constructor() {}
 
-  celebrate() {
-    const duration = 3000;
+  // celebrate() {
+  //   const duration = 3000;
 
-    confetti({
-      particleCount: 150,
-      spread: 180,
-      origin: { y: 0.6 },
-      colors: ['#FF4500', '#008080', '#FFD700'],
-    });
+  //   confetti({
+  //     particleCount: 150,
+  //     spread: 180,
+  //     origin: { y: 0.6 },
+  //     colors: ['#FF4500', '#008080', '#FFD700'],
+  //   });
 
-    setTimeout(() => confetti.reset(), duration);
-  }
+  //   setTimeout(() => confetti.reset(), duration);
+  // }
   simulateHttpRes() {
-    let i = 0;
     this.appState = 'loading';
     this.interval$.pipe(
       mergeMap(() =>
-        of(this.httpResponse[i])
+        of(this.httpResponse[this.i])
           .pipe(
             take(1),
             delay(2000),
+            mergeMap(response => this.randomFailOrSucceed(response)),
             tap(data => {
               console.log(data);
               this.appState = 'resSucess';
             }),
-            mergeMap(response => this.randomFailOrSucceed(response)),
             retryWhen(errors => 
               errors.pipe(
                 scan((retryCount, error) => {
@@ -66,32 +66,27 @@ export class ModelService {
                   }
                   return retryCount;
                 }, 0),
-                delay(1000)
+                delay(3000)
               )
             ),
             catchError(err => {
               this.appState = 'error';
               console.error('All retries failed:', err);
-              throwError(() => new Error('Simulated network error'))
-              this.apiRes = JSON.stringify({
-                name: 'Fallback User',
-                title: 'Fallback Task',
-                completed: false
-              })
-              return of({
-                name: 'Fallback User',
-                title: 'Fallback Task',
-                completed: false
-              }); 
-               
+              this.apiRes = JSON.stringify(
+                {
+                  name: 'Fallback User',
+                  title: 'Fallback Task',
+                  completed: false
+                })
+               return throwError(() => new Error('Simulated network error'))
             })
           )
       ),
       tap(() => {
-        i++;
-        console.log('Request number:', i);
+        this.i++;
+        console.log('Request number:', this.i);
       }),
-      take(8)
+      take(9)
     ).subscribe({
       next: (value) => {
         console.log('Final Value:', value);
