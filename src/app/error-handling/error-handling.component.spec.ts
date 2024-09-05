@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CombineLatestComponent } from './combine-latest.component';
+import { ErrorHandlingComponent } from './error-handling.component';
 
 describe('CombineLatestComponent', () => {
-  let component: CombineLatestComponent;
-  let fixture: ComponentFixture<CombineLatestComponent>;
+  let component: ErrorHandlingComponent;
+  let fixture: ComponentFixture<ErrorHandlingComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CombineLatestComponent]
+      imports: [ErrorHandlingComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(CombineLatestComponent);
+    fixture = TestBed.createComponent(ErrorHandlingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

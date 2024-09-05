@@ -14,10 +14,10 @@ import { CommonModule } from '@angular/common';
     FormsModule,
     CommonModule
   ],
-  templateUrl: './combine-latest.component.html',
-  styleUrl: './combine-latest.component.scss'
+  templateUrl: './error-handling.component.html',
+  styleUrl: './error-handling.component.scss'
 })
-export class CombineLatestComponent implements OnInit{
+export class ErrorHandlingComponent implements OnInit{
  constructor(public modelService: ModelService){}
   ngOnInit() {
   }
