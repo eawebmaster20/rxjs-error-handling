@@ -7,7 +7,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { SplitButtonModule } from 'primeng/splitbutton';
-import { CombineLatestComponent } from './error-handling/combine-latest.component';
+import { ErrorHandlingComponent } from './error-handling/error-handling.component';
 import {SelectButtonModule} from 'primeng/selectbutton';
 import { ModelService } from './services/model/model.service';
 import { SliderModule } from 'primeng/slider';
@@ -27,7 +27,7 @@ import { SliderModule } from 'primeng/slider';
     RouterOutlet, 
     FormsModule, 
     CommonModule,
-    CombineLatestComponent
+    ErrorHandlingComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
