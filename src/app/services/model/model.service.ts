@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { interval, of, throwError } from 'rxjs';
 import { tap, take, delay, catchError, mergeMap, retryWhen, scan } from 'rxjs/operators';
 import { responseData } from '../../interfaces/model.httpRes';
-import * as confetti from 'canvas-confetti';
 
 @Injectable({
   providedIn: 'root'
@@ -30,18 +29,6 @@ export class ModelService {
 
   constructor() {}
 
-  // celebrate() {
-  //   const duration = 3000;
-
-  //   confetti({
-  //     particleCount: 150,
-  //     spread: 180,
-  //     origin: { y: 0.6 },
-  //     colors: ['#FF4500', '#008080', '#FFD700'],
-  //   });
-
-  //   setTimeout(() => confetti.reset(), duration);
-  // }
   simulateHttpRes() {
     this.appState = 'loading';
     this.interval$.pipe(
