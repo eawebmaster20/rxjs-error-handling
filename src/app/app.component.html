@@ -5,10 +5,14 @@
     pRipple 
     label="click here to start" 
     (click)="modelService.simulateHttpRes()"
-    class="p-button-success">
+    class="p-button-primary">
     </button>
   </div>
+
   <div class="div2"> 
+    <div class="api-count">
+      <span>{{modelService.i}} out of {{modelService.httpResponse.length}}</span>
+    </div>
     <div class="fail-guage">
       <p-slider [(ngModel)]="modelService.failChances" [step]="1"  styleClass="w-14rem"/>
       <p>Increase chances of failure</p>
