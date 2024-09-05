@@ -3,10 +3,14 @@
 </div>
 <div class="parent" [ngSwitch]="modelService.appState">
     <div class="div5">
-        <div class="loader4" *ngSwitchCase="'loading'"></div>
+        <div class="loading-container" *ngSwitchCase="'loading'">
+            <div class="loader4"></div>
+            <p>loading...</p>
+        </div>
         <div class="error" *ngSwitchCase="'error'">
             <div class="retries">
-                error: fallback data is...
+                <p class="imoji">😏</p>
+                error: All retries failed, the fall back mechanism ruturned...
                 <p>{{modelService.apiRes}}</p>
             </div>
         </div>
